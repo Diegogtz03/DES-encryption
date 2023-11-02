@@ -10,8 +10,8 @@ def hexKeyGenerator(n):
     
   return key
 
-def fillWithSpace(text):
-  while len(text) % 8 != 0:
+def fillWithSpace(text, n):
+  while len(text) % n != 0:
     text += " "
   return text
 
@@ -260,7 +260,6 @@ def encrypt(pt, rkb, rk):
 
 
 
-
 # ------------- MAIN ------------- #
 
 key = "AABB09182736CCDD"
@@ -319,40 +318,61 @@ for i in range(0, 16):
 
 	rkb.append(round_key)
 	rk.append(bin2hex(round_key))
-	
-originalText = input("Texto a encriptar: ")
 
-# only work with 8 characters, if more, fill with spaces until 8, this in a for loop until no more text is left, this is done in originalText
+selection = -1
 
-# Hello Wo
-# rld.....
-cipher_text = ""
-plain_text = ""
+while selection != 0:
+	selection = int(input("\n-----------------\n1. Encriptar\n2. Desencriptar\n0. Salir\n-----------------\n"))
 
-print("Encryption")
-for i in range((len(originalText) % 8) + 1):
-  tempText = originalText[i*8:(i+1)*8]
-	
-  if (tempText == ""):
-    break
-	
-  if (len(tempText) < 8):
-    tempText = fillWithSpace(tempText)
-		
-  print("Plain Text : ", tempText)
-  pt = tempText.encode("utf-8").hex().upper()
+	# Encryption
+	if selection == 1:		
+		cipher_text = ""
 
-  rkb_rev = rkb[::-1]
-  rk_rev = rk[::-1]
-  temp_cipher_text = bin2hex(encrypt(pt, rkb, rk))
-  text = bin2hex(encrypt(temp_cipher_text, rkb_rev, rk_rev))
-  byte_string = bytes.fromhex(text)
-  plain_text = plain_text + byte_string.decode('utf-8')
-  cipher_text = cipher_text + temp_cipher_text
-	
-print("Cipher Text : ", cipher_text)
+		print("------ Encryption ------")
+		print("Llave: ", key)
 
-print("Decryption")
-print("Result: ", plain_text)
+		originalText = input("Texto a encriptar: ")
+
+		for i in range(int(len(originalText) / 8) + 1):
+			tempText = originalText[i*8:(i+1)*8]
+			
+			if (tempText == ""):
+				break
+			
+			if (len(tempText) < 8):
+				tempText = fillWithSpace(tempText, 8)
+				
+			print("Plain Text : ", tempText)
+			pt = tempText.encode("utf-8").hex().upper()
+			cipher_text = cipher_text + bin2hex(encrypt(pt, rkb, rk))
+
+		print("Cipher Text : ", cipher_text)
+
+	elif selection == 2:
+		# Decryption
+		plain_text = ""
+
+		print("------ Decryption ------")
+		print("Llave:", key)
+
+		originalText = input("Texto a desencriptar: ")
+		for i in range(int(len(originalText) / 16) + 1):
+			tempText = originalText[i*16:(i+1)*16]
+
+			print(tempText)
+			
+			if (tempText == ""):
+				break
+			
+			if (len(tempText) < 16):
+				tempText = fillWithSpace(tempText, 16)
+			
+			rkb_rev = rkb[::-1]
+			rk_rev = rk[::-1]
+			text = bin2hex(encrypt(tempText, rkb_rev, rk_rev))
+			byte_string = bytes.fromhex(text)
+			plain_text = plain_text + byte_string.decode('utf-8')
+
+		print("Decrypted Text:", plain_text)
 
 # This code is contributed by Aditya Jain
