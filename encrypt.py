@@ -3,13 +3,6 @@
 
 import random
 
-def hexKeyGenerator(n):
-  key = ""
-  for i in range(n):
-    key += random.choice("0123456789ABCDEF")
-    
-  return key
-
 def fillWithSpace(text, n):
   while len(text) % n != 0:
     text += " "
@@ -262,7 +255,37 @@ def encrypt(pt, rkb, rk):
 
 # ------------- MAIN ------------- #
 
-key = "AABB09182736CCDD"
+print("-------------- Creación de llave --------------\n")
+option = -1
+key = ""
+
+while option not in [0, 1, 2]:
+	option = int(input("1. Ingresar llave hexadecimal (16 caracteres) \n2. Ingresar llave en texto plano (8 caracteres)\n0. Salir\n"))
+	
+	if option == 1:
+		key = input("Ingrese llave: ")
+		if len(key) != 16:
+			print("Llave inválida")
+			option = -1
+		elif not all(c in "0123456789ABCDEF" for c in key):
+			print("Llave inválida")
+			option = -1
+		else:
+			key = key.upper()
+	elif option == 2:
+		key = input("Ingrese llave: ")
+
+		if len(key) != 8:
+			print("Llave inválida")
+			option = -1
+		else:
+			key = key.encode("utf-8").hex().upper()
+	elif option == 0:
+		exit()
+	else:
+		print("Opción inválida")
+
+# key = "AABB091AA736CCDD"
 
 # Key generation
 # --hex to binary
@@ -306,7 +329,7 @@ rk = []
 
 
 for i in range(0, 16):
-	# Shifting the bits by nth shifts by checking from shift table
+	# Shifting the bits by nth sphifts by checking from shift table
 	left = shift_left(left, shift_table[i])
 	right = shift_left(right, shift_table[i])
 
